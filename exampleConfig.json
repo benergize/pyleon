@@ -1,0 +1,12 @@
+{
+	"files": [
+		"engine/GameEngine.js",
+		"engine/objects/Background.js",
+		"engine/objects/GameObject.js",
+		"engine/objects/Sprite.js",
+		"engine/objects/Room.js",
+		"engine/objects/Tile.js",
+		"engine/objects/Sound.js"
+	],
+	"output": "packaged/BJGE.js"
+}
