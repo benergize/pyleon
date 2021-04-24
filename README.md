@@ -1,7 +1,7 @@
 # pyleon
 My dumb way to package scripts.
 
-Welcome to the fabulous world of pyleon, where all your dreams come true before your eyes. This is a dumb python script I wrote that takes scripts and puts them together in one file.
+Welcome to the fabulous world of pyleon, where all your dreams come true before your eyes. This is a dumb <delete>python</delete> JavaScript script I wrote that takes scripts and puts them together in one file.
 
 ## Use Case
 
