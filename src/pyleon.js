@@ -3,54 +3,78 @@ var fs = require('fs');
 function isset(arg) { return typeof arg != "undefined" && arg != null && arg != ""; }
 function print(arg) { return console.log(arg); }
 
-var pyleFile = "";
-var argv = process.argv;
-var fullFile = "";
+pyle();
 
-print("\npyleon 0.21 - Yet more dumb software by Ben Ehrlich (benergize.com)")
-print("Let's Rock and Roll")
-print("----------------------------\n")
+function pyle(firstrun=true) {
 
-if(isset(argv[2])) { pyleFile = argv[2]; }
-else if(fs.existsSync("pyle.json")) { pyleFile = "pyle.json"; }
-else { return print("Please specify a JSON file or create a pyle.json file."); }
+		
+	var pyleFile = "";
+	var argv = process.argv;
+	var fullFile = "";
 
-if(pyleFile != "") {
-    try {
+	if(firstrun) {
 
-        if(!fs.existsSync(pyleFile)) { throw(`File "${pyleFile}" could not be found.`); }
+		print("\npyleon 0.21 - Yet more dumb software by Ben Ehrlich (benergize.com)")
+		print("Let's Rock and Roll")
+		print("----------------------------\n")
+	};
 
-        print(`Getting configuration from "${pyleFile}"...\n`);
+	if(isset(argv[2])) { pyleFile = argv[2]; }
+	else if(fs.existsSync("pyle.json")) { pyleFile = "pyle.json"; }
+	else { return print("Please specify a JSON file or create a pyle.json file."); }
 
-        var data = JSON.parse(fs.readFileSync('pyle.json', 'utf8')); 
 
-        if(!isset(data.files)) { throw (`Please specify the files you want to combine with the "files" property in your JSON file.`); }
-        if(!isset(data.output)) { throw (`Please specify the files you want to output to with the "output" property in your JSON file.`); }
-        if(!Array.isArray(data.output)) { data.output = [data.output]; }
+	if(pyleFile != "") {
+		try {
 
-        data.files.forEach(file=>{
+			if(!fs.existsSync(pyleFile)) { throw(`File "${pyleFile}" could not be found.`); }
 
-            print(`Reading file "${file}".`);
-            let contents = fs.readFileSync(file, 'utf8');
-            fullFile += contents;
+			if(firstrun) {  print(`Getting configuration from "${pyleFile}"...\n`); }
 
-        });
+			var data = JSON.parse(fs.readFileSync('pyle.json', 'utf8')); 
 
-        print("");
+			if(!isset(data.files)) { throw (`Please specify the files you want to combine with the "files" property in your JSON file.`); }
+			if(!isset(data.output)) { throw (`Please specify the files you want to output to with the "output" property in your JSON file.`); }
+			if(!Array.isArray(data.output)) { data.output = [data.output]; }
 
-        data.output.forEach(file=>{
-            print(` - Writing output to "${file}".`);
-            fs.writeFileSync(file, fullFile);
-        });
+			data.files.forEach(file=>{
 
-        print("");
+				print(`Reading file "${file}".`);
+				let contents = fs.readFileSync(file, 'utf8');
+				fullFile += contents;
 
-        print("Jobs done! Thanks for playing.");
+			});
 
-      } catch (err) {
-        console.error(err)
-      }
+			print("");
 
+			data.output.forEach(file=>{
+				print(` - Writing output to "${file}".`);
+				fs.writeFileSync(file, fullFile);
+			});
+
+			print("");
+
+
+		  } catch (err) {
+			console.error(err)
+		}
+		
+		
+		if(isset(data.watch) && data.watch && firstrun) {
+
+			print("Watch is ON. Watching files for changes...");
+			
+			data.files.forEach(file=>{
+				fs.watch(file, (eventType, filename) => { 
+					console.log("OBSERVED " + filename + " changed.\n");
+					pyle(false);
+				})
+			});
+		}
+		else {
+
+			if(!data.watch) { print("Jobs done! Thanks for playing."); }
+		}
+	}
+	
 }
-    
-     
